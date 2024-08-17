@@ -1,0 +1,43 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-encoding
+'UTF-8'
+-protected
+-source
+'22'
+-sourcepath
+'C:/Ariel/Kuliah/MatKul/Tingkat-2/Semester-4/Oprec-Lab/Queens-Game-Solver/QueensGame/src/main/java;C:/Ariel/Kuliah/MatKul/Tingkat-2/Semester-4/Oprec-Lab/Queens-Game-Solver/QueensGame/target/generated-sources/annotations'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Ariel/Kuliah/MatKul/Tingkat-2/Semester-4/Oprec-Lab/Queens-Game-Solver/QueensGame/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'QueensGame 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'QueensGame 1.0-SNAPSHOT API'
+arsonhs.queensgame
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\src\main\java = 1722759465984
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\generated-sources\annotations = 1723877465625
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\allclasses-index.html = 1723877472085
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\allpackages-index.html = 1723877472089
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\element-list = 1723877471916
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\help-doc.html = 1723877472147
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\index-all.html = 1723877472125
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\index.html = 1723877472134
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\member-search-index.js = 1723877472099
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\module-search-index.js = 1723877472092
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\overview-tree.html = 1723877472059
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\package-search-index.js = 1723877472094
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\search.html = 1723877472130
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\serialized-form.html = 1723877472005
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\tag-search-index.js = 1723877472101
+C:\Ariel\Kuliah\MatKul\Tingkat-2\Semester-4\Oprec-Lab\Queens-Game-Solver\QueensGame\target\apidocs\type-search-index.js = 1723877472097
