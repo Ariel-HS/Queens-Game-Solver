@@ -6,8 +6,8 @@ package arsonhs.queensgame;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -20,9 +20,23 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class QueensGame extends javax.swing.JFrame {
     // variable declaration for non-gui
-    private String[][] board;
+    private String[][] board = {{"1"}};
     private String pieceOption = "queen";
-    private String algorithmOption;
+    private String algorithmOption = "backtrack";
+    // colorList for board (max of 9 colors/region)
+    private final Color[] colorList = {Color.blue, Color.red, Color.cyan, Color.gray, Color.green, Color.magenta, Color.orange, Color.pink, Color.yellow};
+    // initialize hashmap for color
+    private HashMap<String, Color> colorMap = new HashMap<>() {{
+        put("1", Color.blue);
+    }};
+    // max board size of 10x10
+    private final Integer MAX_AMOUNT = 10;
+    private final Integer MIN_AMOUNT = 1;
+    // var to store selected color for board editing
+    Color selectedColor = colorList[0];
+    // var to store size of board
+    private Integer rowAmount = 1;
+    private Integer colAmount = 1;
     
     /**
      * Creates new form QueensGame
@@ -30,6 +44,7 @@ public class QueensGame extends javax.swing.JFrame {
     public QueensGame() {        
         initComponents();
         initButtonGroup();
+        initComboBox();
     }
 
     /**
@@ -42,6 +57,7 @@ public class QueensGame extends javax.swing.JFrame {
     private void initComponents() {
 
         pieceButtonGroup = new javax.swing.ButtonGroup();
+        algorithmButtonGroup = new javax.swing.ButtonGroup();
         titleLabel = new javax.swing.JLabel();
         piecePanel = new javax.swing.JPanel();
         queenRadioButton = new javax.swing.JRadioButton();
@@ -51,6 +67,13 @@ public class QueensGame extends javax.swing.JFrame {
         solvePanel = new javax.swing.JPanel();
         backtrackRadioButton = new javax.swing.JRadioButton();
         loadButton = new javax.swing.JButton();
+        minConflictRadioButton = new javax.swing.JRadioButton();
+        boardSizeLabel = new javax.swing.JLabel();
+        boardSizeEntry = new javax.swing.JTextField();
+        applyButton = new javax.swing.JButton();
+        solveButton = new javax.swing.JButton();
+        colorComboBox = new javax.swing.JComboBox<>();
+        colorLabel = new javax.swing.JLabel();
         boardPanel = new javax.swing.JPanel();
         placeholderPanel = new javax.swing.JPanel();
 
@@ -59,6 +82,7 @@ public class QueensGame extends javax.swing.JFrame {
 
         titleLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         titleLabel.setText("QUEENS GAME");
+        titleLabel.setAlignmentX(0.5F);
 
         queenRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         queenRadioButton.setSelected(true);
@@ -121,6 +145,7 @@ public class QueensGame extends javax.swing.JFrame {
         );
 
         backtrackRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        backtrackRadioButton.setSelected(true);
         backtrackRadioButton.setText("Backtrack");
         backtrackRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,15 +161,67 @@ public class QueensGame extends javax.swing.JFrame {
             }
         });
 
+        minConflictRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        minConflictRadioButton.setText("Min Conflict");
+        minConflictRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minConflictRadioButtonActionPerformed(evt);
+            }
+        });
+
+        boardSizeLabel.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        boardSizeLabel.setText("Board Size");
+
+        boardSizeEntry.setText("1");
+        boardSizeEntry.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                boardSizeEntryKeyTyped(evt);
+            }
+        });
+
+        applyButton.setText("APPLY");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
+            }
+        });
+
+        solveButton.setText("SOLVE");
+        solveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                solveButtonActionPerformed(evt);
+            }
+        });
+
+        colorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorComboBoxActionPerformed(evt);
+            }
+        });
+
+        colorLabel.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        colorLabel.setText("Color");
+
         javax.swing.GroupLayout solvePanelLayout = new javax.swing.GroupLayout(solvePanel);
         solvePanel.setLayout(solvePanelLayout);
         solvePanelLayout.setHorizontalGroup(
             solvePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(solvePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(backtrackRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(solvePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(backtrackRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(minConflictRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(solveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(solvePanelLayout.createSequentialGroup()
+                        .addGroup(solvePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(colorComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(colorLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(boardSizeEntry, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(applyButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                            .addComponent(boardSizeLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         solvePanelLayout.setVerticalGroup(
             solvePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,7 +230,21 @@ public class QueensGame extends javax.swing.JFrame {
                 .addComponent(loadButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(backtrackRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(418, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(minConflictRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(boardSizeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(boardSizeEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(applyButton)
+                .addGap(18, 18, 18)
+                .addComponent(colorLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(colorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(solveButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         boardPanel.setBackground(new java.awt.Color(0, 0, 0));
@@ -163,6 +254,11 @@ public class QueensGame extends javax.swing.JFrame {
         placeholderPanel.setBackground(new java.awt.Color(0, 0, 255));
         placeholderPanel.setMinimumSize(new java.awt.Dimension(522, 451));
         placeholderPanel.setPreferredSize(new java.awt.Dimension(522, 451));
+        placeholderPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                placeholderPanelMouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout placeholderPanelLayout = new javax.swing.GroupLayout(placeholderPanel);
         placeholderPanel.setLayout(placeholderPanelLayout);
@@ -193,16 +289,17 @@ public class QueensGame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(piecePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(boardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(solvePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(titleLabel)
-                .addGap(271, 271, 271))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(piecePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(boardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(solvePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(289, 289, 289)
+                        .addComponent(titleLabel)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,23 +345,23 @@ public class QueensGame extends javax.swing.JFrame {
             
             // assume format is correct
             Scanner scanner = new Scanner(file);
-            String[] dimension = scanner.nextLine().split("\\s+");
-            int nRows = Integer.parseInt(dimension[0]);
-            int nCols = Integer.parseInt(dimension[1]);
-            int nRegions = Integer.parseInt(scanner.nextLine());
+            int nRows = Integer.parseInt(scanner.nextLine().strip());
+            int nCols = nRows;
+            int nRegions = Integer.parseInt(scanner.nextLine().strip());
+            
+            rowAmount = nRows;
+            colAmount = nCols;
+            boardSizeEntry.setText(Integer.toString(nRows));
             
             String[][] boardTemp = new String[nRows][nCols];
             for (int i=0;i<nRows;i++) {
-                boardTemp[i] = scanner.nextLine().split("\\s+");
+                boardTemp[i] = scanner.nextLine().strip().split("\\s+");
 //                System.out.println(Arrays.toString(boardTemp[i]));
             }
             
             scanner.close();
             
-            // initialize colorList for board (max of 9 colors/region)
-            Color[] colorList = {Color.blue, Color.red, Color.cyan, Color.gray, Color.green, Color.magenta, Color.orange, Color.pink, Color.yellow};
-            // initialize hashmap for color
-            HashMap<String, Color> colorMap = new HashMap<>();
+            colorMap = new HashMap<>();
             int ctrRegs = 0;
             for (int i=0;i<nRows;i++) {
                 for (int j=0;j<nCols;j++) {
@@ -282,12 +379,17 @@ public class QueensGame extends javax.swing.JFrame {
                 }
             }
             this.board = boardTemp;
-            Pair<Boolean,Integer[]> resultSolve = Backtrack.solve(pieceOption, board, nRows, nCols);
+            Pair<Boolean,Integer[]> resultSolve;
+            if (algorithmOption.equals("minConflict")) {
+                resultSolve = MinConflict.solve(pieceOption, board, nRows, nCols);
+            } else {
+                resultSolve = Backtrack.solve(pieceOption, board, nRows, nCols);
+            }
             
             drawBoard(pieceOption, resultSolve.getValue(), nCols, nRows, colorMap);
             
             if (resultSolve.getKey() == false) {
-                JOptionPane.showMessageDialog(this, "No Solution!");
+                JOptionPane.showMessageDialog(this, "Solution not found!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -308,6 +410,120 @@ public class QueensGame extends javax.swing.JFrame {
     private void knightRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_knightRadioButtonActionPerformed
         pieceOption = "knight";
     }//GEN-LAST:event_knightRadioButtonActionPerformed
+
+    private void minConflictRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minConflictRadioButtonActionPerformed
+        algorithmOption = "minConflict";
+    }//GEN-LAST:event_minConflictRadioButtonActionPerformed
+
+    private void boardSizeEntryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardSizeEntryKeyTyped
+        // only takes number
+        char key = evt.getKeyChar();
+        if(!(Character.isDigit(key))){
+            evt.consume();
+            return;
+        }
+        
+        String amount = boardSizeEntry.getText();
+        if (amount.length() < 1) {
+            return;
+        }
+        
+        if (amount.charAt(0) == '0') {
+            boardSizeEntry.setText(amount.substring(1));
+        }
+        
+        Integer amountInt = Integer.valueOf(amount+key);
+        if (amountInt > MAX_AMOUNT) {
+            boardSizeEntry.setText(Integer.toString(MAX_AMOUNT));
+            evt.consume();
+        }
+        
+        if (amountInt < MIN_AMOUNT) {
+            boardSizeEntry.setText(Integer.toString(MIN_AMOUNT));
+            evt.consume();
+        }
+    }//GEN-LAST:event_boardSizeEntryKeyTyped
+
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        Integer nRows = Integer.valueOf(boardSizeEntry.getText());
+        Integer nCols = nRows;
+        rowAmount = nRows;
+        colAmount = nCols;
+        
+        String[][] newBoard = new String[nRows][nCols];
+        String basis = board[0][0];
+
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < nCols; j++) {
+                if (i < board.length && j < board[i].length) {
+                    newBoard[i][j] = board[i][j];
+                } else {
+                    newBoard[i][j] = basis;
+                }
+            }
+        }
+        
+        this.board = newBoard;
+        cleanBoard(nCols, nRows, colorMap);
+    }//GEN-LAST:event_applyButtonActionPerformed
+
+    private void solveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solveButtonActionPerformed
+        Pair<Boolean,Integer[]> resultSolve;
+        if (algorithmOption.equals("minConflict")) {
+//            resultSolve = MinConflict.test(pieceOption, board, 4, 4);
+            resultSolve = MinConflict.solve(pieceOption, board, rowAmount, colAmount);
+        } else {
+            resultSolve = Backtrack.solve(pieceOption, board, rowAmount, colAmount);
+        }
+            
+        drawBoard(pieceOption, resultSolve.getValue(), rowAmount, colAmount, colorMap);
+
+        if (resultSolve.getKey() == false) {
+            JOptionPane.showMessageDialog(this, "Solution not found!");
+        }
+    }//GEN-LAST:event_solveButtonActionPerformed
+
+    private void colorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorComboBoxActionPerformed
+        Integer colorIdx = colorComboBox.getSelectedIndex();
+        selectedColor = colorList[colorIdx];
+    }//GEN-LAST:event_colorComboBoxActionPerformed
+
+    private void placeholderPanelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_placeholderPanelMouseReleased
+        Integer xCoorClick = evt.getX();
+        Integer yCoorClick = evt.getY();
+        
+        Graphics g = placeholderPanel.getGraphics();
+        int xMult = 522/colAmount;
+        int yMult = 451/rowAmount;
+        for (int y=0;y<colAmount;y++){
+            for (int x=0;x<rowAmount;x++) {
+                Integer xCoor = x*xMult+2;
+                Integer yCoor = y*yMult+2;
+                Integer xCoorNext = (x+1)*xMult+2;
+                Integer yCoorNext = (y+1)*yMult+2;
+                
+                // find board square from coordinate
+                if (xCoorClick <= xCoorNext && xCoorClick >= xCoor &&
+                        yCoorClick <= yCoorNext && yCoorClick >= yCoor) {
+                    Integer width = xMult-2;
+                    Integer height = yMult-2;
+                    g.setColor(selectedColor);
+                    // draw the color
+                    g.fillRect(xCoor,yCoor,width,height);
+                    
+                    // update the board
+                    String symbol = getSymbol(selectedColor);
+                    // if color is not mapped yet
+                    if (symbol.isBlank()) {
+                        symbol = getRandomSymbol();
+                        colorMap.put(symbol, selectedColor);
+                    }
+                    
+                    board[y][x] = symbol;
+                }
+            }
+        }
+    }//GEN-LAST:event_placeholderPanelMouseReleased
 
     private void drawBoard(String piece, Integer[] pieceLocation, Integer nCols, Integer nRows, HashMap<String, Color> colorMap) {
         this.boardPanel.remove(this.placeholderPanel);
@@ -337,6 +553,74 @@ public class QueensGame extends javax.swing.JFrame {
                     }
                 }
             };
+            
+            placeholderPanel.setBackground(new java.awt.Color(0, 0, 255));
+            placeholderPanel.setMinimumSize(new java.awt.Dimension(522, 451));
+            placeholderPanel.setPreferredSize(new java.awt.Dimension(522, 451));
+            placeholderPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                placeholderPanelMouseReleased(evt);
+            }
+            });
+            
+            javax.swing.GroupLayout placeholderPanelLayout = new javax.swing.GroupLayout(placeholderPanel);
+            placeholderPanel.setLayout(placeholderPanelLayout);
+            placeholderPanelLayout.setHorizontalGroup(
+                placeholderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 522, Short.MAX_VALUE)
+            );
+            placeholderPanelLayout.setVerticalGroup(
+                placeholderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 0, Short.MAX_VALUE)
+            );
+
+            javax.swing.GroupLayout boardPanelLayout = new javax.swing.GroupLayout(boardPanel);
+            boardPanel.setLayout(boardPanelLayout);
+            boardPanelLayout.setHorizontalGroup(
+                boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(placeholderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
+            boardPanelLayout.setVerticalGroup(
+                boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(placeholderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
+    }
+    
+    private void cleanBoard(Integer nCols, Integer nRows, HashMap<String, Color> colorMap) {
+        this.boardPanel.remove(this.placeholderPanel);
+            this.placeholderPanel = new javax.swing.JPanel() { 
+                
+                @Override
+                public void paint(Graphics g) {
+                    int xMult = 522/nCols;
+                    int yMult = 451/nRows;
+                    for (int y=0;y<nRows;y++){
+                        for (int x=0;x<nCols;x++) {
+                            String symbol = board[y][x];
+                            Color curColor = colorMap.get(symbol);
+                            g.setColor(curColor);
+                            
+                            Integer xCoor = x*xMult+2;
+                            Integer yCoor = y*yMult+2;
+                            Integer width = xMult-2;
+                            Integer height = yMult-2;
+                            g.fillRect(xCoor,yCoor,width,height);
+                        }
+                    }
+                }
+            };
+            
+            placeholderPanel.setBackground(new java.awt.Color(0, 0, 255));
+            placeholderPanel.setMinimumSize(new java.awt.Dimension(522, 451));
+            placeholderPanel.setPreferredSize(new java.awt.Dimension(522, 451));
+            placeholderPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                placeholderPanelMouseReleased(evt);
+            }
+            });
+            
             javax.swing.GroupLayout placeholderPanelLayout = new javax.swing.GroupLayout(placeholderPanel);
             placeholderPanel.setLayout(placeholderPanelLayout);
             placeholderPanelLayout.setHorizontalGroup(
@@ -405,16 +689,24 @@ public class QueensGame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup algorithmButtonGroup;
+    private javax.swing.JButton applyButton;
     private javax.swing.JRadioButton backtrackRadioButton;
     private javax.swing.JRadioButton bishopRadioButton;
     private javax.swing.JPanel boardPanel;
+    private javax.swing.JTextField boardSizeEntry;
+    private javax.swing.JLabel boardSizeLabel;
+    private javax.swing.JComboBox<String> colorComboBox;
+    private javax.swing.JLabel colorLabel;
     private javax.swing.JRadioButton knightRadioButton;
     private javax.swing.JButton loadButton;
+    private javax.swing.JRadioButton minConflictRadioButton;
     private javax.swing.ButtonGroup pieceButtonGroup;
     private javax.swing.JPanel piecePanel;
     private javax.swing.JPanel placeholderPanel;
     private javax.swing.JRadioButton queenRadioButton;
     private javax.swing.JRadioButton rookRadioButton;
+    private javax.swing.JButton solveButton;
     private javax.swing.JPanel solvePanel;
     private javax.swing.JLabel titleLabel;
     // End of variables declaration//GEN-END:variables
@@ -424,5 +716,34 @@ public class QueensGame extends javax.swing.JFrame {
         pieceButtonGroup.add(rookRadioButton);
         pieceButtonGroup.add(bishopRadioButton);
         pieceButtonGroup.add(knightRadioButton);
+        
+        algorithmButtonGroup.add(backtrackRadioButton);
+        algorithmButtonGroup.add(minConflictRadioButton);
+    }
+    
+    private void initComboBox() {
+        colorComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Blue", "Red", "Cyan", "Gray", "Green", "Magenta", "Orange", "Pink", "Yellow" }));    
+    }
+    
+    private String getSymbol(Color color) {
+        for (Entry<String, Color> entry : colorMap.entrySet()) {
+            if (entry.getValue().equals(selectedColor)) {
+                return entry.getKey();
+            }
+        }
+        
+        return "";
+    }
+    
+    private String getRandomSymbol() {
+        String[] symbolList = {"1","2","3","4","5","6","7","8","9","0"}; // max num of region is 9, so atleast 1 should be picked
+        
+        for (String symbol: symbolList) {
+            if (colorMap.get(symbol) == null) {
+                return symbol;
+            }
+        }
+        
+        return "";
     }
 }

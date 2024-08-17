@@ -1,0 +1,11 @@
+9
+9
+u u u y y y b b g
+u u u y b b b b b
+u u u y y b b b b
+w u u y b b b b b
+p p p y y y c b c
+p r r r l r c b c
+p p r r r r c b c
+p r r r r r c b c
+p p p r r r c c c

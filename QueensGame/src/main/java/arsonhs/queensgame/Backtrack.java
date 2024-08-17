@@ -74,6 +74,11 @@ public class Backtrack {
         
         // if all location checks out, return pieceLocation
         if (row >= nRows) {
+            for (Boolean value : regionMap.values()) {
+                if (value != true) {
+                    return new Pair(false, pieceLocation);
+                }
+            }
             return new Pair(true,pieceLocation);
         }
         
@@ -83,7 +88,7 @@ public class Backtrack {
         Arrays.fill(pieceLocationMax, -1);
         
         // try all cols in row
-        for (int i=0; i<nCols; i++) {
+        for (int i=0; i<nCols; i++) {           
             // if can put piece
             Boolean isSafe = false;
             switch (piece) {
@@ -114,7 +119,7 @@ public class Backtrack {
                 // before reset, set pieceLocationMax
                 Integer[] tempLoc = result.getValue().clone();
                 Integer temp = getMaxNumPieces(tempLoc);
-                if (temp > maxNumPieces) {
+                if (temp >= maxNumPieces) {
                     pieceLocationMax = tempLoc;
                     maxNumPieces = temp;
                 }
